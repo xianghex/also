@@ -22,7 +22,7 @@
 
   unordered_map< int, vector<CubeDecomposition> > unorderedMapOfPossibleCubeDecompositionVector;
 
-SolutionTree::SolutionTree( vector< int> initialProblemVector, vector< int> degrees,  int accuracy, int variableNumber, unsigned time_limit, bool verbose )
+SolutionTree::SolutionTree( vector< int> initialProblemVector, vector< int> degrees,  int accuracy, int variableNumber, unsigned time_limit, bool verbose, string filename )
 {
 	// NOTE: _log2LengthOfTotalCube equals to d1 + d2 + ... + dk
 	_log2LengthOfTotalCube = 0;
@@ -60,6 +60,10 @@ SolutionTree::SolutionTree( vector< int> initialProblemVector, vector< int> degr
 	leaves_size = 0;
 	_optimalNode = Node();
 	_optimalNodes = vector<Node>();
+	
+	int pos = filename.find( ".txt" );
+	fileName = filename.erase( pos, 4 );
+	cout<<"fileName:  "<<fileName<<endl;
 
 	unorderedMapOfPossibleCubeDecompositionVector.clear();
 }
@@ -98,7 +102,8 @@ void SolutionTree::ProcessTree()
 	for ( auto sol = 0; sol < _optimalNodes.size(); ++sol )
 	{
 		stringstream ss;
-		ss << "solution-";
+		ss << "./" << fileName << "/";
+		ss << fileName <<"-solution-";
 		ss.fill('0');
 		ss.width(3);
 		ss << sol << ".pla";
@@ -395,7 +400,7 @@ vector<Node> SolutionTree::ProcessNode( Node currentNode )
 				ofs << ".e" << endl;
 
 				// invoke the espresso through MVSIS
-				system("./mvsis -c \"read_pla temp.pla; espresso; print_stats -s; quit\" > tempres.txt");
+				system("../mvsis -c \"read_pla temp.pla; espresso; print_stats -s; quit\" > tempres.txt");
 
 				auto ifs = ifstream("tempres.txt");
 
@@ -681,7 +686,7 @@ vector<Node> SolutionTree::ProcessNodeVector( vector<Node> nodeVecToBeProcessed 
           }
           ofs << ".e" << endl;
 
-          system("./mvsis -c \"read_pla acc.pla; espresso; print;\" > acc.txt");
+          system("../mvsis -c \"read_pla acc.pla; espresso; print;\" > acc.txt");
 
           auto ofs_acc = ofstream( "acc.txt", ofstream::app );
           ofs_acc << " end_of_file" << endl;
@@ -890,7 +895,7 @@ vector<Node> SolutionTree::ProcessNodeVector( vector<Node> nodeVecToBeProcessed 
           }
           ofs << ".e" << endl;
 
-          system("./mvsis -c \"read_pla acc.pla; espresso; print;\" > acc.txt");
+          system("../mvsis -c \"read_pla acc.pla; espresso; print;\" > acc.txt");
 
           auto ofs_acc = ofstream( "acc.txt", ofstream::app );
           ofs_acc << " end_of_file" << endl;

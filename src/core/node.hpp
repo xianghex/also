@@ -93,7 +93,7 @@ using namespace also;
   class SolutionTree
   {
     public:
-      SolutionTree(vector< int> initialProblemVector, vector< int> degrees,  int accuracy, int variableNumber, unsigned time_limit, bool verbose );
+      SolutionTree(vector< int> initialProblemVector, vector< int> degrees,  int accuracy, int variableNumber, unsigned time_limit, bool verbose, string filename );
       void ProcessTree();
       // process a single Node
       vector<Node> ProcessNode(Node currentNode);
@@ -132,6 +132,7 @@ using namespace also;
       vector<int> originalVector;
       unsigned time_Limit;
       bool flag_verbose;
+      string fileName;
       //mig_network stochastic_synthesis( num_vars, m, n, vec );
 
       vector<Node> _nodeVector;

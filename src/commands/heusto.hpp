@@ -39,7 +39,7 @@ namespace alice
 			void execute()
 			{
 				//test if MVSIS is available
-				if( system( "./mvsis -c \"quit\"") != 0)
+				if( system( "../mvsis -c \"quit\"") != 0)
 				{
 					std::cerr << "[e] mvsis binary is not available in the current working directory.\n";
 					exit( 0 );
@@ -110,7 +110,7 @@ namespace alice
 				myfile.close();
 				bool verbose = is_set( "verbose" );
 
-				auto solutionTree = SolutionTree( problemVector, degrees, accuracy, variableNumber, time_limit, verbose );
+				auto solutionTree = SolutionTree( problemVector, degrees, accuracy, variableNumber, time_limit, verbose, filename);
 				auto start = chrono::system_clock::now();
 				solutionTree.ProcessTree();
 				auto end = chrono::system_clock::now();
