@@ -61,8 +61,10 @@ SolutionTree::SolutionTree( vector< int> initialProblemVector, vector< int> degr
 	_optimalNode = Node();
 	_optimalNodes = vector<Node>();
 	
-	int pos = filename.find( ".txt" );
-	fileName = filename.erase( pos, 4 );
+	int pos1 = filename.rfind( "/" );
+	filename = filename.erase( 0, pos1 + 1 );
+	int pos2 = filename.find( ".txt" );
+	fileName = filename.erase( pos2, 4 );
 	cout<<"fileName:  "<<fileName<<endl;
 
 	unorderedMapOfPossibleCubeDecompositionVector.clear();
@@ -1526,7 +1528,7 @@ bool check_result( AssMat resultAssMat, vector<int> problemVector, unsigned m, u
 
 		for ( int col = 0; col < int(resultAssMat[line].size()); col++ )
 		{
-			if ( resultAssMat[line][col] == '1' )
+			if ( resultAssMat[line][col] != '0' )
 			{
 				colVector[col] = colVector[col] + 1;
 			}
@@ -1560,6 +1562,7 @@ bool check_result( AssMat resultAssMat, vector<int> problemVector, unsigned m, u
 	{
 		if ( problemVector[i] != resultVector[i] ) 
 			{
+				cout << "[i] " << i << " " << "resultVector[i]: " << resultVector[i] <<endl; 
 				return false;
 			}
 	}
