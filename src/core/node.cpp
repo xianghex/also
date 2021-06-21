@@ -278,52 +278,61 @@ vector<Node> SolutionTree::ProcessNode( Node currentNode )
 				}
 				else
 				{
-					mig_network mig;
-					std::vector<unsigned> vec = process_vector(originalVector, currentNode._remainingProblemVector, totalCubeVector);
-					std::vector<unsigned> preoccupy = process_position( currentNode._assignedAssMat, m, n );
-
-					if( flag_verbose )
+					if( heu_times <= 6 )
 					{
-						cout << "newVector: ";
-						for ( int j=0; j < vec.size(); j++ )
-						{
-							cout << vec[j] << " ";
-						}
-						cout << endl;
+						mig_network mig;
+						std::vector<unsigned> vec = process_vector(originalVector, currentNode._remainingProblemVector, totalCubeVector);
+						std::vector<unsigned> preoccupy = process_position( currentNode._assignedAssMat, m, n );
 
-						cout<<"preoccupy: ";
-						for( int i=0; i < preoccupy.size(); i++ )
-						{
-							cout<< preoccupy[i] << " ";
-						}
-						cout<<endl;
-					}
-
-					auto res = stochastic_synthesis( num_vars, m, n, vec, preoccupy, time_Limit );
-
-					if( res.has_value() )
-					{
-						sto_times = sto_times + 1;
-						sto_maxLevel = currentNode._level + 1;
-						mig = res.value();
-						default_simulator<kitty::dynamic_truth_table> sim( m + n );
-						const auto tt = simulate<kitty::dynamic_truth_table>( mig, sim )[0];
 						if( flag_verbose )
 						{
-							//std::cout<< " tt:  ";
-							//kitty::print_binary(tt, std::cout);
-							//std::cout<<std::endl;
-							std::cout << "tt: 0x" << kitty::to_hex( tt ) << std::endl;
+							cout << "newVector: ";
+							for ( int j=0; j < vec.size(); j++ )
+							{
+								cout << vec[j] << " ";
+							}
+							cout << endl;
+
+							cout<<"preoccupy: ";
+							for( int i=0; i < preoccupy.size(); i++ )
+							{
+								cout<< preoccupy[i] << " ";
+							}
+							cout<<endl;
 						}
-						string stringtt = to_binary(tt);
-						newAssMatVec.push_back(  process_truthtable( currentNode._assignedAssMat, stringtt, m, n )  );
+
+						auto res = stochastic_synthesis( num_vars, m, n, vec, preoccupy, time_Limit );
+
+						if( res.has_value() )
+						{
+							sto_times = sto_times + 1;
+							sto_maxLevel = currentNode._level + 1;
+							mig = res.value();
+							default_simulator<kitty::dynamic_truth_table> sim( m + n );
+							const auto tt = simulate<kitty::dynamic_truth_table>( mig, sim )[0];
+							if( flag_verbose )
+							{
+								//std::cout<< " tt:  ";
+								//kitty::print_binary(tt, std::cout);
+								//std::cout<<std::endl;
+								std::cout << "tt: 0x" << kitty::to_hex( tt ) << std::endl;
+							}
+							string stringtt = to_binary(tt);
+							newAssMatVec.push_back(  process_truthtable( currentNode._assignedAssMat, stringtt, m, n )  );
+						}
+						else
+						{	
+							std::cout << " failed to get synthesized results due to time limit\n";
+							heu_times = heu_times + 1;
+							newAssMatVec = AssignMatrixByEspressoVector( currentNode._assignedAssMat, cubeDecomposition );
+						}
 					}
 					else
-					{	
-						std::cout << " failed to get synthesized results due to time limit\n";
+					{
+						std::cout << " give up stochastic synthesis\n";
 						heu_times = heu_times + 1;
 						newAssMatVec = AssignMatrixByEspressoVector( currentNode._assignedAssMat, cubeDecomposition );
-					}
+					}	
 				}
 			}
 			
